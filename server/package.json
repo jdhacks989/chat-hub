@@ -1,19 +1,13 @@
 {
-  "name": "chat-hub",
+  "name": "chat-app",
   "version": "1.0.0",
-  "description": "Aplicação de chat em tempo real usando Socket.io e Express",
+  "description": "Chat app with Node.js and Socket.io",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "vercel dev"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^4.0.0"
-  },
-  "engines": {
-    "node": "14.x"
-  },
-  "author": "Seu Nome",
-  "license": "ISC"
+  }
 }
