@@ -67,43 +67,50 @@
             <option value="😡">😡 Raiva</option>
             <option value="🤔">🤔 Hmmm</option>
         </select>
-        <input type="file" id="fileInput">
-        <button onclick="sendMessage()">Enviar</button>
+        <button id="sendBtn">Enviar</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();  // Conectando ao servidor Socket.io
 
-        // Quando a página carrega, tenta conectar ao servidor
-        window.onload = () => {
-            // Enviar a mensagem para o servidor
-            document.querySelector('button').addEventListener('click', () => {
-                const username = document.getElementById('username').value.trim();
-                const message = document.getElementById('messageInput').value.trim();
-                const emoji = document.getElementById('emojiSelect').value;
-                const msgData = { username, message, emoji };
+        // Adicionando evento ao botão de envio
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
 
-                if (message || emoji) {
-                    // Enviar mensagem ao servidor
-                    socket.emit('send_message', msgData);
+        function sendMessage() {
+            const username = document.getElementById('username').value.trim();
+            const message = document.getElementById('messageInput').value.trim();
+            const emoji = document.getElementById('emojiSelect').value;
 
-                    // Limpar o campo de mensagem
-                    document.getElementById('messageInput').value = '';
-                    document.getElementById('emojiSelect').value = '';
-                }
-            });
+            // Impedir envio de mensagens sem nome ou vazias
+            if (!username) {
+                alert('Digite um nome antes de enviar a mensagem.');
+                return;
+            }
+            if (!message && !emoji) {
+                alert('A mensagem não pode estar vazia.');
+                return;
+            }
 
-            // Ouvir por mensagens recebidas e exibir no chat
-            socket.on('receive_message', (msgData) => {
-                const chat = document.getElementById('chat');
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'message';
-                msgDiv.innerHTML = `<strong>${msgData.username}:</strong> ${msgData.message} ${msgData.emoji}`;
-                chat.appendChild(msgDiv);
-                chat.scrollTop = chat.scrollHeight;  // Rolar para o fundo da janela de chat
-            });
-        };
+            const msgData = { username, message, emoji };
+
+            // Enviar mensagem ao servidor
+            socket.emit('send_message', msgData);
+
+            // Limpar o campo de mensagem
+            document.getElementById('messageInput').value = '';
+            document.getElementById('emojiSelect').value = '';
+        }
+
+        // Exibir mensagens recebidas no chat
+        socket.on('receive_message', (msgData) => {
+            const chat = document.getElementById('chat');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message';
+            msgDiv.innerHTML = `<strong>${msgData.username}:</strong> ${msgData.message} ${msgData.emoji}`;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;  // Rolar para o final do chat automaticamente
+        });
     </script>
 </body>
 </html>
